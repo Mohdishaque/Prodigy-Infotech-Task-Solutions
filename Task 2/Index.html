@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch with Lab Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: lightgreen;
+        }
+
+        #stopwatch-container {
+            text-align: center;
+        }
+
+        #time {
+            font-size: 2em;
+            margin: 10px;
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        #lab-times {
+            margin-top: 20px;
+        }
+
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        #lab-times-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+
+        .lab-time {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="stopwatch-container">
+    <div id="time">00:00:00</div>
+    <div id="controls">
+        <button onclick="startStopwatch()">Start</button>
+        <button onclick="stopStopwatch()">Stop</button>
+        <button onclick="recordLabTime()">Record Lab Time</button>
+        <button onclick="resetStopwatch()">Reset</button>
+    </div>
+    <ul id="lab-times-list"></ul>
+</div>
+
+<script>
+    let timer;
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    let labTimes = [];
+
+    function updateDisplay() {
+        const timeDisplay = document.getElementById('time');
+        timeDisplay.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    }
+
+    function formatTime(value) {
+        return value < 10 ? `0${value}` : value;
+    }
+
+    function startStopwatch() {
+        if (!timer) {
+            timer = setInterval(function () {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+                updateDisplay();
+            }, 1000);
+        }
+    }
+
+    function stopStopwatch() {
+        clearInterval(timer);
+        timer = null;
+    }
+
+    function recordLabTime() {
+        if (timer) {
+            const labTime = {
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds
+            };
+            labTimes.push(labTime);
+            displayLabTimes();
+        }
+    }
+
+    function displayLabTimes() {
+        const labTimesList = document.getElementById('lab-times-list');
+        labTimesList.innerHTML = '';
+        labTimes.forEach(function (labTime, index) {
+            const listItem = document.createElement('li');
+            listItem.className = 'lab-time';
+            listItem.textContent = `Lab Time ${index + 1}: ${formatTime(labTime.hours)}:${formatTime(labTime.minutes)}:${formatTime(labTime.seconds)}`;
+            labTimesList.appendChild(listItem);
+        });
+    }
+
+    function resetStopwatch() {
+        stopStopwatch();
+        seconds = 0;
+        minutes = 0;
+        hours = 0;
+        labTimes = [];
+        updateDisplay();
+        displayLabTimes();
+    }
+</script>
+
+</body>
+</html>

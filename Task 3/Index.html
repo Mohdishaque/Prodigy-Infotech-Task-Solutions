@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: lightgreen;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            text-align: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #ddd;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+
+<div id="board"></div>
+<div id="result"></div>
+
+<script>
+    const board = document.getElementById('board');
+    const result = document.getElementById('result');
+    let currentPlayer = 'X';
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+
+    function createCell(index) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.addEventListener('click', function () {
+            if (gameActive && gameBoard[index] === '') {
+                gameBoard[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                checkWinner();
+                switchPlayer();
+            }
+        });
+        return cell;
+    }
+
+    function switchPlayer() {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+
+    function checkWinner() {
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        for (const combination of winningCombinations) {
+            const [a, b, c] = combination;
+            if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                result.textContent = ` Player ${currentPlayer} wins!`;
+                gameActive = false;
+                return;
+            }
+        }
+
+        if (!gameBoard.includes('')) {
+            result.textContent = ' It\'s a tie!';
+            gameActive = false;
+        }
+    }
+
+    function initializeBoard() {
+        for (let i = 0; i < 9; i++) {
+            const cell = createCell(i);
+            board.appendChild(cell);
+        }
+    }
+
+    initializeBoard();
+</script>
+
+</body>
+</html>
